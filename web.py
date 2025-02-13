@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from tensorflow.keras.models import load_model  
 
-model = load_model('/home/minhcong/Machine_Learning/Stock Predictions Model.keras')
+model = load_model("Stock Predictions Model.keras")
 
 st.header('Stock Market Predictor')
 
