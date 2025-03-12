@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Prediction</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        form { margin: 20px; }
+        input, button { padding: 10px; margin: 5px; }
+        img { max-width: 90%; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Stock Price Prediction</h1>
+    <form method="POST">
+        <label for="stock">Enter Stock Symbol:</label>
+        <input type="text" id="stock" name="stock" required>
+        <button type="submit">Predict</button>
+    </form>
+    
+    {% if stock %}
+        <h2>Predictions for {{ stock }}</h2>
+        <img src="data:image/png;base64,{{ plot_url }}" alt="Stock Prediction Graph">
+    {% endif %}
+</body>
+</html>
