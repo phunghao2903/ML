@@ -8,9 +8,8 @@ app = Flask(__name__)
 
 def generate_plot():
     # Tạo dữ liệu dự đoán
-    future_days = 11
-    future_dates = pd.date_range(start="2024-03-13", periods=future_days)
-    np.random.seed(123)  # Đặt seed để kết quả ngẫu nhiên có thể tái lập
+    future_days = 10
+    future_dates = pd.date_range(start="2024-01-01", periods=future_days)
     future_predictions = np.random.uniform(100, 200, size=future_days)  # Giả lập dữ liệu dự đoán
 
     # Chuyển ngày thành số để dùng spline
