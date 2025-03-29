@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 
-model = load_model('/home/phung/jnotebook/source/Stock Predictions Model.keras')
+model = load_model('/home/phung/jnotebook/source/Tuan4/Stock Predictions Model.keras')
 st.header('Stock Market Predictor')
 
 stock = st.text_input('Enter Stock Symnbol','GOOG')

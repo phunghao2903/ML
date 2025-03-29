@@ -1,0 +1,80 @@
+import numpy as np
+import pandas as pd
+import yfinance as yf
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.callbacks import EarlyStopping
+import matplotlib.dates as mdates
+
+
+from tensorflow.keras.models import load_model
+
+model = load_model('BSI.keras')
+
+
+ma_cophieu = "BSI.VN"
+start_date = "2025-03-24"
+end_date = "2025-03-26"  # Lấy thêm 1 ngày để đảm bảo có đủ dữ liệu
+buoc_thoi_gian = "5m"
+
+# Tải dữ liệu từ Yahoo Finance
+data_moi = yf.download(ma_cophieu, start=start_date, end=end_date, interval=buoc_thoi_gian)
+
+# Chuyển đổi múi giờ từ UTC sang Asia/Ho_Chi_Minh (GMT+7)
+data_moi.index = data_moi.index.tz_convert("Asia/Ho_Chi_Minh")
+
+print(data_moi)
+
+# Lựa chọn cột giá đóng cửa và loại bỏ NaN
+data_moi = data_moi[['Close']].dropna()
+
+# Chuẩn hóa dữ liệu
+scaler = MinMaxScaler(feature_range=(0, 1))
+data_scaled_moi = scaler.fit_transform(data_moi)
+
+# Hàm tạo dữ liệu theo định dạng phù hợp cho LSTM
+def create_dataset(dataset, time_step=30):
+    X = []
+    for i in range(len(dataset) - time_step):
+        X.append(dataset[i:(i + time_step), 0])
+    return np.array(X)
+
+# Tạo tập dữ liệu cho ngày 25/3
+time_step = 30
+X_moi = create_dataset(data_scaled_moi, time_step)
+
+# Reshape để phù hợp với LSTM
+X_moi = X_moi.reshape(X_moi.shape[0], X_moi.shape[1], 1)
+
+# Dự đoán
+y_pred_moi = model.predict(X_moi)
+
+# Chuyển dữ liệu về giá trị gốc
+y_pred_inv_moi = scaler.inverse_transform(y_pred_moi)
+
+# Lấy giá thực tế tương ứng
+y_test_inv_moi = data_moi['Close'].values[time_step:]
+
+plt.figure(figsize=(14, 5))
+
+plt.plot(data_moi.index[time_step:], y_test_inv_moi, color='blue', label='Giá thực tế')
+plt.plot(data_moi.index[time_step:], y_pred_inv_moi, color='red', linestyle='dashed', label='Giá dự đoán')
+
+plt.title('So sánh giá cổ phiếu ngày 25/3 (mỗi 5 phút)')
+plt.xlabel('Thời gian')
+plt.ylabel('Giá cổ phiếu')
+plt.legend()
+
+# **Chỉ hiển thị hh:mm trên trục x**
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%H:%M", tz=data_moi.index.tz))  
+plt.gca().xaxis.set_major_locator(mdates.MinuteLocator(interval=30))  # Mỗi 30 phút một mốc
+plt.xticks(rotation=45)
+
+# **Giới hạn trục x trong ngày 25/03, sử dụng múi giờ GMT+7**
+start_time = pd.Timestamp("2025-03-25 09:00", tz="Asia/Ho_Chi_Minh")
+end_time = pd.Timestamp("2025-03-25 15:00", tz="Asia/Ho_Chi_Minh")
+plt.xlim(start_time, end_time)
+
+plt.show()
