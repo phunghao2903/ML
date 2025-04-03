@@ -9,13 +9,7 @@ from streamlit.runtime.scriptrunner import add_script_run_ctx
 from streamlit.runtime.scriptrunner.script_runner import RerunData
 
 def get_realtime_update_strategy():
-    """
-    Determine the most appropriate real-time update strategy
-    based on Streamlit version and capabilities.
     
-    Returns:
-        function: Appropriate update method
-    """
     try:
         # Check for newer Streamlit versions
         import streamlit as st
@@ -33,17 +27,7 @@ def get_realtime_update_strategy():
     return custom_rerun
 
 def fetch_stock_data(symbol, timeframe):
-    """
-    Fetch stock data for different timeframes.
-    If no data is available for today, use the last available data.
     
-    Args:
-        symbol (str): Stock symbol
-        timeframe (str): Selected timeframe
-    
-    Returns:
-        pd.DataFrame: Stock price data
-    """
     try:
         # Define interval based on timeframe
         intervals = {
@@ -88,17 +72,7 @@ def fetch_stock_data(symbol, timeframe):
         return pd.DataFrame()
 
 def fetch_stock_data_custom(symbol, start_date, end_date):
-    """
-    Fetch stock data for custom date range.
     
-    Args:
-        symbol (str): Stock symbol
-        start_date (datetime): Start date for data
-        end_date (datetime): End date for data
-    
-    Returns:
-        pd.DataFrame: Stock price data
-    """
     try:
         # Convert datetime.date to datetime.datetime
         start_datetime = datetime.combine(start_date, datetime.min.time())
@@ -118,45 +92,40 @@ def fetch_stock_data_custom(symbol, start_date, end_date):
         return pd.DataFrame()
 
 def create_stock_chart(df, symbol, timeframe):
-    """
-    Create an interactive line chart for stock prices
-    
-    Args:
-        df (pd.DataFrame): Stock price data
-        symbol (str): Stock symbol
-        timeframe (str): Selected timeframe
-    
-    Returns:
-        plotly.graph_objs._figure.Figure: Interactive chart
-    """
-    # Create line chart with markers for all timeframes
     fig = go.Figure()
+    
+    # Thêm đường giá (Price Line)
     fig.add_trace(go.Scatter(
         x=df.index, 
         y=df['Close'], 
-        mode='lines+markers', 
+        mode='lines', 
         name=f'{symbol} Price',
-        line=dict(color='blue', width=2),
-        marker=dict(size=4)  # Add small markers
+        line=dict(color='#72bcd4', width=1.5)  # Màu xanh nhạt, đường mỏng hơn
     ))
     
-    # Customize layout
+    # Thiết lập giao diện nền tối
     title_text = f'{symbol} Stock Price - {timeframe}'
     if timeframe == "custom":
         title_text = f'{symbol} Stock Price - Custom Range'
         
     fig.update_layout(
-        title=title_text,
-        xaxis_title='Date/Time',
-        yaxis_title='Price',
-        height=500,
-        template='plotly_white',
+        title=dict(text=title_text, font=dict(size=20, color="white")),
         xaxis=dict(
-            # Adjust tickformat based on timeframe
-            tickformat='%Y-%m-%d %H:%M' if timeframe == '1d' else '%Y-%m-%d',
-            # Rotate tick labels for better readability
-            tickangle=45
-        )
+            title='Date',
+            tickformat='%Y-%m-%d' if timeframe != '1d' else '%Y-%m-%d %H:%M',
+            tickangle=45,
+            gridcolor='#444444',
+            color='white'
+        ),
+        yaxis=dict(
+            title='Price',
+            gridcolor='#444444',
+            color='white'
+        ),
+        height=500,
+        template='plotly_dark',  # Nền tối giống ảnh bạn gửi
+        plot_bgcolor='#1e1e1e',  # Màu nền chính (xám đậm)
+        paper_bgcolor='#1e1e1e'  # Màu nền ngoài biểu đồ
     )
     
     return fig
@@ -244,4 +213,4 @@ def main():
         rerun_method()
 
 if __name__ == "__main__":
-    main()
+    main() 
