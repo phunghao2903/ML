@@ -13,6 +13,25 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
 
+
+
+
+# Tạo một monkey patch cho socketserver._SocketWriter.write
+import socketserver
+
+original_write = socketserver._SocketWriter.write
+
+def patched_write(self, b):
+    try:
+        return original_write(self, b)
+    except BrokenPipeError:
+        return 0
+    except OSError:
+        return 0
+
+socketserver._SocketWriter.write = patched_write
+
+
 #-------------------------------------------------------------------------------------------
 # xử lý yêu cầu GET từ client
 # lấy dữ liệu cổ phiếu
@@ -114,7 +133,7 @@ def fetch_stock_data(symbol, timeframe):
     """Fetch stock data for predefined timeframes"""
     # Define intervals based on timeframe
     intervals = {
-        "1d": "5m",
+        "1d": "2m",
         "5d": "1h",
         "1w": "1h",
         "1mo": "1d",
@@ -209,7 +228,13 @@ def get_available_stocks():
         "VDS.VN": "VDS",
         "VIX.VN": "VIX",
         "VND.VN": "VND",
-        "SSI.VN": "SSI"
+        "SSI.VN": "SSI",
+        "APG.VN": "APG",
+        "ARG.VN": "ARG",
+        "FTS.VN": "FTS",
+        "HCM.VN": "HCM",
+        "TVS.VN": "TVS"
+        
     }
     return jsonify(stocks)
 
@@ -238,7 +263,7 @@ def predict(symbol, timeframe, data1, data2):
 
     # Dự đoán từng điểm trong ngày 25/3
     y_pred = []
-    X_input = data_scaled[-30:].reshape(1, 30, 1)
+    X_input = data_scaled[-50:].reshape(1, 50, 1)
     
 
     for i in range(len(data2)):

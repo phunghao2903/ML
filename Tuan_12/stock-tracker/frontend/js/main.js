@@ -211,16 +211,11 @@ function loadStockData(symbol, timeframe, customDates = null) {
                 
 
                 if (data.prediction_result) {
-
                     jsonForDate2.prediction_result = data.prediction_result;
                     // console.log('Added prediction data to chart:', data.prediction_result);
-                
                 } else {
-                
                     console.log('Chưa có prediction result');
-                
                 }
-                
                 console.log('Updated jsonForDate2:', jsonForDate2);
 
                 updateChart(jsonForDate2);
@@ -291,7 +286,13 @@ function updateMetrics(data, data2 = null) {
 
             // Update current price
             const currentPrice = latestData2.close;
-            document.getElementById('current-price').textContent = currentPrice;
+            const formattedPrice = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(currentPrice);
+            console.log(formattedPrice); 
+            document.getElementById('current-price').textContent = formattedPrice;
+            
             
             // Calculate and update price change
             const priceChange = ((latestData2.close - latestData.close) / latestData.close * 100).toFixed(2);
@@ -330,7 +331,7 @@ function startAutoRefresh() {
     if (currentTimeframe === '1d') {
         autoUpdateTimer = setInterval(() => {
             loadStockData(currentStock, currentTimeframe);
-        }, 60000); // Refresh every minute
+        }, 120000); // Refresh every 2 minute
     }
 }
 
