@@ -247,8 +247,8 @@ def predict(symbol, timeframe, data1, data2):
     data2 = data2[['Close']].dropna()
 
     new_symbol = symbol.replace(".VN", "")
-    print(f'/home/levanhuy/Machine_Learning/Tuan_11/model/predict_{new_symbol}_{timeframe}')
-    model = load_model(f'/home/levanhuy/Machine_Learning/Tuan_11/model/predict_{new_symbol}_{timeframe}.keras')
+    
+    model = load_model(f'D:/KHA/VKU/Nam_4/Ki_2/Machine_Learning/ML/Tuan_12/stock-tracker/backend/predict_{new_symbol}_{timeframe}.keras')
     
     # Tạo vùng giới hạn 7%
     ref_price = float(data1.iloc[-1]['Close'])
