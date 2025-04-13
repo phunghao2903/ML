@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Price Tracker</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link type="image/png" sizes="96x96" rel="icon" href="./img/favicon.png">
+    <!-- Plotly.js for charts -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Date picker -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Real-Time Stock Price Tracker</h1>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="control-group">
+                    <label for="stock-select">Select Stock:</label>
+                    <select id="stock-select">
+                        <!-- Will be populated from API -->
+                        <option value="VIX.VN">VIX.VN</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Time Range:</label>
+                    <div class="time-range-buttons">
+                        <button class="time-button active" data-timeframe="1d">1D</button>
+                        <button class="time-button" data-timeframe="5d">5D</button>
+                        <button class="time-button" data-timeframe="1w">1W</button>
+                        <button class="time-button" data-timeframe="1mo">1M</button>
+                        <button class="time-button" data-timeframe="6mo">6M</button>
+                        <button class="time-button" data-timeframe="1y">1Y</button>
+                        <button class="time-button" data-timeframe="custom">Custom</button>
+                    </div>
+                </div>
+
+                <div class="control-group date-pickers" style="display: none;">
+                    <div>
+                        <label for="start-date">Start Date:</label>
+                        <input type="text" id="start-date" class="date-picker">
+                    </div>
+                    <div>
+                        <label for="end-date">End Date:</label>
+                        <input type="text" id="end-date" class="date-picker">
+                    </div>
+                    <button id="apply-custom-dates">Apply</button>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div id="stock-chart"></div>
+                
+                <div class="metrics">
+                    <div class="metric-card">
+                        <h3>Current Price</h3>
+                        <p id="current-price">--</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Change</h3>
+                        <p id="price-change">--</p>
+                    </div>
+                </div>
+                
+                <div class="update-info">
+                    <p>Last updated: <span id="last-updated">--</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/chart.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>
